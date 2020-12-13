@@ -14,6 +14,6 @@ It generates random maze using Prim's minimum spanning tree algorithm. For graph
 ![](https://github.com/ChrisFlam3/fuzzyMaze/blob/master/maze.gif?raw=true)
 
 # Implementation details
-Java version: 11
-Dependencies: JavaFX, JFuzzy
-Owner: Christopher Misan
+Java version: 11  
+Dependencies: JavaFX, JFuzzy  
+Owner: Christopher Misan  
