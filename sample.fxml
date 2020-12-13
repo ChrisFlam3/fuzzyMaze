@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+    <children>
+        <Canvas id="canv" height="720.0" layoutX="240.0" width="720.0" />
+        <Canvas id="canv2" height="720.0" layoutX="240.0" width="720.0" />
+        <Canvas id="canv3" height="720.0" layoutX="240.0" width="720.0" />
+        <Label fx:id="front" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="128.0" text="Front distance: " />
+        <Label fx:id="left" layoutX="14.0" layoutY="40.0" prefHeight="26.0" prefWidth="128.0" text="Left distance:" />
+        <Label fx:id="right" layoutX="14.0" layoutY="66.0" prefHeight="26.0" prefWidth="128.0" text="Right distance:" />
+        <Slider id="speed" fx:id="speedSlider" blockIncrement="1.0" layoutX="38.0" layoutY="136.0" majorTickUnit="10.0" minorTickCount="1" onMouseReleased="#testing" orientation="VERTICAL" prefHeight="545.0" prefWidth="40.0" showTickLabels="true" showTickMarks="true" value="1.0" />
+        <Label fx:id="right1" layoutX="14.0" layoutY="110.0" prefHeight="26.0" prefWidth="128.0" text="Simulation speed" />
+    </children>
+</Pane>

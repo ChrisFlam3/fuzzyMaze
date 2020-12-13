@@ -1,0 +1,116 @@
+FUNCTION_BLOCK maze
+
+VAR_INPUT
+	distFront : REAL;
+	distLeft : REAL;
+	distRight : REAL;
+	ddistFront : REAL;
+    ddistLeft : REAL;
+    ddistRight : REAL;
+END_VAR
+
+VAR_OUTPUT
+	turn : REAL;
+END_VAR
+
+FUZZIFY distFront
+
+    TERM very_far := (998, 0) (999, 1);
+	TERM far := (10, 0) (90, 0.5) (180, 1) ;
+	TERM close := (0, 0) (10, 0.5) (90,0);
+	TERM very_close:=(0,1) (10,0.5) (15,0);
+
+END_FUZZIFY
+
+FUZZIFY ddistFront
+
+	TERM same := (-1, 0) (0, 1) (1, 0) ;
+	TERM closer := (-1, 1) (0, 0);
+	TERM further:= (0,0) (1,1);
+
+END_FUZZIFY
+
+FUZZIFY distLeft
+
+    TERM very_far := (998, 0) (999, 1);
+	TERM far := (10, 0) (90, 0.5) (180, 1) ;
+	TERM close := (0, 0) (10, 0.5) (90,0);
+	TERM very_close:=(0,1) (10,0.5) (15,0);
+
+END_FUZZIFY
+
+FUZZIFY ddistLeft
+
+	TERM same := (-1, 0) (0, 1) (1, 0) ;
+	TERM closer := (-1, 1) (0, 0);
+	TERM further:= (0,0) (1,1);
+
+END_FUZZIFY
+
+
+FUZZIFY distRight
+
+    TERM very_far := (998, 0) (999, 1);
+	TERM far := (10, 0) (90, 0.5) (180, 1) ;
+	TERM close := (0, 0) (10, 0.5) (90,0);
+	TERM very_close:=(0,1) (10,0.5) (15,0);
+
+END_FUZZIFY
+
+FUZZIFY ddistRight
+
+	TERM same := (-1, 0) (0, 1) (1, 0) ;
+	TERM closer := (-1, 1) (0, 0);
+	TERM further:= (0,0) (1,1);
+
+END_FUZZIFY
+
+
+DEFUZZIFY turn
+
+TERM right := 1;
+TERM hard_right := -5;
+TERM very_hard_right:=-12;
+TERM left:=1;
+TERM hard_left:=5;
+TERM very_hard_left:=20;
+TERM same:=0;
+
+
+METHOD : COGS;
+DEFAULT := 0;
+
+END_DEFUZZIFY
+
+RULEBLOCK first
+AND: MIN;
+ACT: MIN;
+
+
+RULE 0:IF distFront IS close AND ddistFront IS closer AND distRight IS close THEN turn IS very_hard_left;
+
+RULE 2:IF distRight IS far AND ddistRight IS same THEN turn IS hard_right;
+RULE 3:IF distRight IS far AND ddistRight IS further THEN turn IS hard_right;
+RULE 4:IF distRight IS far AND ddistRight IS closer THEN turn IS same;
+
+RULE 5:IF distRight IS close AND ddistRight IS closer THEN turn IS left;
+RULE 6:IF distRight IS very_close AND ddistRight IS closer THEN turn IS hard_left;
+
+RULE 7:IF distRight IS very_close AND ddistRight IS further THEN turn IS hard_right;
+
+RULE 8:IF distRight IS close AND ddistRight IS further THEN turn IS hard_right;
+RULE 9:IF distRight IS close AND ddistRight IS same THEN turn IS same;
+
+RULE 10:IF distRight IS very_far AND ddistRight IS same THEN turn IS very_hard_right;
+
+RULE 11:IF distFront IS close AND ddistFront IS further AND distRight IS close THEN turn IS very_hard_left;
+
+
+
+
+
+
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
