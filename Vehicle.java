@@ -1,3 +1,4 @@
+
 package sample;
 
 public class Vehicle {
@@ -20,39 +21,37 @@ public class Vehicle {
         this.cell = cell;
         this.position = position;
         this.move = move;
-        this.leftSen = new Vector2d(Math.cos(1.5707963267948966D) * move.x - Math.sin(1.5707963267948966D) * move.y, Math.sin(1.5707963267948966D) * move.x + Math.cos(1.5707963267948966D) * move.y);
-        this.rightSen = new Vector2d(Math.cos(-1.5707963267948966D) * move.x - Math.sin(-1.5707963267948966D) * move.y, Math.sin(-1.5707963267948966D) * move.x + Math.cos(-1.5707963267948966D) * move.y);
+        this.leftSen = new Vector2d(Math.cos(Math.PI/2) * move.x - Math.sin(Math.PI/2) * move.y, Math.sin(Math.PI/2) * move.x + Math.cos(Math.PI/2) * move.y);
+        this.rightSen = new Vector2d(Math.cos(-Math.PI/2) * move.x - Math.sin(-Math.PI/2) * move.y, Math.sin(-Math.PI/2) * move.x + Math.cos(-Math.PI/2) * move.y);
         this.cellSize = cellSize;
     }
 
     public void rotate(double angle) {
-        double rad = angle * 0.017453292519943295D;
+        double rad = angle * Math.PI/180;
         this.rotation += rad;
-        this.rotation %= 6.283185307179586D;
+        this.rotation =this.rotation%(2*Math.PI);
         this.move = new Vector2d(Math.cos(rad) * this.move.x - Math.sin(rad) * this.move.y, Math.sin(rad) * this.move.x + Math.cos(rad) * this.move.y);
         this.leftSen = new Vector2d(Math.cos(rad) * this.leftSen.x - Math.sin(rad) * this.leftSen.y, Math.sin(rad) * this.leftSen.x + Math.cos(rad) * this.leftSen.y);
         this.rightSen = new Vector2d(Math.cos(rad) * this.rightSen.x - Math.sin(rad) * this.rightSen.y, Math.sin(rad) * this.rightSen.x + Math.cos(rad) * this.rightSen.y);
     }
 
     public void move() {
-        Vector2d var10000 = this.position;
-        var10000.x += this.move.x;
-        var10000 = this.position;
-        var10000.y -= this.move.y;
-        if (this.position.x >= (double)this.cellSize) {
+        this.position.x += this.move.x;
+        this.position.y -= this.move.y;
+        if (this.position.x >= this.cellSize) {
             this.position.x = 0;
-            ++this.cell.x;
+            this.cell.x++;
         } else if (this.position.x < 0) {
-            this.position.x = (double)(this.cellSize - 1);
-            --this.cell.x;
+            this.position.x = this.cellSize - 1;
+            this.cell.x--;
         }
 
-        if (this.position.y >= (double)this.cellSize) {
+        if (this.position.y >= this.cellSize) {
             this.position.y = 0;
-            ++this.cell.y;
+            this.cell.y++;
         } else if (this.position.y < 0) {
-            this.position.y = (double)(this.cellSize - 1);
-            --this.cell.y;
+            this.position.y = this.cellSize - 1;
+            this.cell.y--;
         }
 
     }
@@ -60,46 +59,47 @@ public class Vehicle {
     public double getDistance(Vector2d dir, Maze maze) {
         double maxcos = 0;
         double dist = 1000;
-        if (0.3D < dir.angle(this.left)) {
+        if (0.3 < dir.angle(this.left)) {
             maxcos = dir.angle(this.left);
-            if (!maze.maze[this.cell.x][this.cell.y].sides[0] || (this.position.x <= (double)(this.cellSize / 4) || this.position.x >= 0.75D * (double)this.cellSize || this.position.y <= (double)(this.cellSize / 4) || this.position.y >= 0.75D * (double)this.cellSize) && !dir.equals(this.move)) {
-                dist = Math.min(dist, (this.position.x - 0.25D * (double)this.cellSize) / maxcos);
-            } else if (maxcos > 0.7D) {
-                return 999;
-            }
+            if (maze.maze[this.cell.x][this.cell.y].sides[0] && (this.position.x > this.cellSize / 4 && this.position.x < 0.75 * this.cellSize && this.position.y > this.cellSize / 4 && this.position.y < 0.75 * this.cellSize || dir.equals(this.move))) {
+                if (maxcos > 0.7)
+                    return 999;
+            }else
+                dist = Math.min(dist, (this.position.x - 0.25 * this.cellSize) / maxcos);
+
         }
 
-        if (0.3D < dir.angle(this.up)) {
+        if (0.3 < dir.angle(this.up)) {
             maxcos = dir.angle(this.up);
-            if (maze.maze[this.cell.x][this.cell.y].sides[3] && (this.position.x > (double)(this.cellSize / 4) && this.position.x < 0.75D * (double)this.cellSize && this.position.y > (double)(this.cellSize / 4) && this.position.y < 0.75D * (double)this.cellSize || dir.equals(this.move))) {
-                if (maxcos > 0.7D) {
+            if (maze.maze[this.cell.x][this.cell.y].sides[3] && (this.position.x > this.cellSize / 4 && this.position.x < 0.75 * this.cellSize && this.position.y > this.cellSize / 4 && this.position.y < 0.75 * this.cellSize || dir.equals(this.move))) {
+                if (maxcos > 0.7)
                     return 999;
-                }
-            } else {
-                dist = Math.min(dist, (this.position.y - 0.25D * (double)this.cellSize) / maxcos);
-            }
+
+            } else
+                dist = Math.min(dist, (this.position.y - 0.25 * this.cellSize) / maxcos);
+
         }
 
-        if (0.3D < dir.angle(this.right)) {
+        if (0.3 < dir.angle(this.right)) {
             maxcos = dir.angle(this.right);
-            if (maze.maze[this.cell.x][this.cell.y].sides[2] && (this.position.x > (double)(this.cellSize / 4) && this.position.x < 0.75D * (double)this.cellSize && this.position.y > (double)(this.cellSize / 4) && this.position.y < 0.75D * (double)this.cellSize || dir.equals(this.move))) {
-                if (maxcos > 0.7D) {
+            if (maze.maze[this.cell.x][this.cell.y].sides[2] && (this.position.x > this.cellSize / 4 && this.position.x < 0.75 * this.cellSize && this.position.y > this.cellSize / 4 && this.position.y < 0.75 * this.cellSize || dir.equals(this.move))) {
+                if (maxcos > 0.7)
                     return 999;
-                }
-            } else {
-                dist = Math.min(dist, ((double)this.cellSize * 0.75D - this.position.x) / maxcos);
-            }
+
+            } else
+                dist = Math.min(dist, (this.cellSize * 0.75 - this.position.x) / maxcos);
+
         }
 
-        if (0.3D < dir.angle(this.down)) {
+        if (0.3 < dir.angle(this.down)) {
             maxcos = dir.angle(this.down);
-            if (maze.maze[this.cell.x][this.cell.y].sides[1] && (this.position.x > (double)(this.cellSize / 4) && this.position.x < 0.75D * (double)this.cellSize && this.position.y > (double)(this.cellSize / 4) && this.position.y < 0.75D * (double)this.cellSize || dir.equals(this.move))) {
-                if (maxcos > 0.7D) {
+            if (maze.maze[this.cell.x][this.cell.y].sides[1] && (this.position.x > this.cellSize / 4 && this.position.x < 0.75 * this.cellSize && this.position.y > this.cellSize / 4 && this.position.y < 0.75 * this.cellSize || dir.equals(this.move))) {
+                if (maxcos > 0.7)
                     return 999;
-                }
-            } else {
-                dist = Math.min(dist, ((double)this.cellSize * 0.75D - this.position.y) / maxcos);
-            }
+
+            } else
+                dist = Math.min(dist, (this.cellSize * 0.75 - this.position.y) / maxcos);
+
         }
 
         return dist;

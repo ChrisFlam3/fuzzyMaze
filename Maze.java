@@ -1,7 +1,7 @@
 
 package sample;
 
-import java.util.Iterator;
+
 import java.util.Vector;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,31 +18,30 @@ public class Maze {
         this.size = size;
         this.maze = new Node[size][size];
 
-        int i;
-        for(i = 0; i < size; ++i) {
-            for(int y = 0; y < size; ++y) {
+
+        for(int i = 0; i < size; i++) {
+            for(int y = 0; y < size; y++) {
                 this.maze[i][y] = new Node();
             }
         }
 
         this.generate();
-        i = Math.min(width, height) / size;
-        this.vehicle = new Vehicle(new Vector2(0, 0), new Vector2d((double)(i / 2), 60), new Vector2d(-1, 0), i);
+        this.vehicle = new Vehicle(new Vector2(0, 0), new Vector2d(Math.min(width, height) / size / 2, 60), new Vector2d(-1, 0), Math.min(width, height) / size);
     }
 
     private void generate() {
-        Vector<Vector2> frontier = new Vector();
-        frontier.add(new Vector2((int)(Math.random() * (double)this.size), (int)(Math.random() * (double)this.size)));
+        Vector<Vector2> frontier = new Vector<>();
+        frontier.add(new Vector2((int)(Math.random() * this.size), (int)(Math.random() * this.size)));
 
         while(!frontier.isEmpty()) {
-            int rand = (int)(Math.random() * (double)frontier.size());
-            int x = ((Vector2)frontier.elementAt(rand)).x;
-            int y = ((Vector2)frontier.elementAt(rand)).y;
+            int rand = (int)(Math.random() * frontier.size());
+            int x = frontier.elementAt(rand).x;
+            int y = frontier.elementAt(rand).y;
             frontier.remove(rand);
             Node node = this.maze[x][y];
             node.isEmpty = true;
-            Vector<Vector2> nonEmptyNeighbors = new Vector();
-            Vector<Vector2> emptyNeighbors = new Vector();
+            Vector<Vector2> nonEmptyNeighbors = new Vector<>();
+            Vector<Vector2> emptyNeighbors = new Vector<>();
             if (x + 1 < this.size && this.maze[x + 1][y].isEmpty) {
                 emptyNeighbors.add(new Vector2(x + 1, y));
             } else if (x + 1 < this.size) {
@@ -67,9 +66,9 @@ public class Maze {
                 nonEmptyNeighbors.add(new Vector2(x, y - 1));
             }
 
-            int rand2 = (int)(Math.random() * (double)emptyNeighbors.size());
+            int rand2 = (int)(Math.random() * emptyNeighbors.size());
             if (emptyNeighbors.size() > 0) {
-                Vector2 pick = (Vector2)emptyNeighbors.get(rand2);
+                Vector2 pick = emptyNeighbors.get(rand2);
                 if (x + 1 < this.size && pick.x == x + 1) {
                     node.sides[2] = true;
                     this.maze[x + 1][y].sides[0] = true;
@@ -85,10 +84,7 @@ public class Maze {
                 }
             }
 
-            Iterator var11 = nonEmptyNeighbors.iterator();
-
-            while(var11.hasNext()) {
-                Vector2 v = (Vector2)var11.next();
+            for(Vector2 v:nonEmptyNeighbors) {
                 frontier.remove(v);
                 frontier.add(v);
             }
@@ -101,18 +97,18 @@ public class Maze {
         context.setFill(Color.GRAY);
         int offsetX = width / 2 - this.size / 2 * pxSize;
         int offsetY = height / 2 - this.size / 2 * pxSize;
-        context.fillRect((double)offsetX, (double)offsetY, (double)(this.size * pxSize), (double)(this.size * pxSize));
+        context.fillRect(offsetX, offsetY, this.size * pxSize, this.size * pxSize);
 
-        for(int i = 0; i < this.size; ++i) {
-            for(int y = 0; y < this.size; ++y) {
+        for(int i = 0; i < this.size; i++) {
+            for(int y = 0; y < this.size; y++) {
                 context.setFill(Color.WHITE);
-                context.fillRect((double)(offsetX + i * pxSize + pxSize / 4), (double)(offsetY + y * pxSize + pxSize / 4), (double)(pxSize / 2), (double)(pxSize / 2));
+                context.fillRect(offsetX + i * pxSize + pxSize / 4, offsetY + y * pxSize + pxSize / 4, pxSize / 2, pxSize / 2);
                 if (this.maze[i][y].sides[0]) {
-                    context.fillRect((double)(offsetX + i * pxSize - pxSize / 4), (double)(offsetY + y * pxSize + pxSize / 4), (double)(pxSize / 2), (double)(pxSize / 2));
+                    context.fillRect(offsetX + i * pxSize - pxSize / 4, offsetY + y * pxSize + pxSize / 4, pxSize / 2, pxSize / 2);
                 }
 
                 if (this.maze[i][y].sides[3]) {
-                    context.fillRect((double)(offsetX + i * pxSize + pxSize / 4), (double)(offsetY + y * pxSize - pxSize / 4), (double)(pxSize / 2), (double)(pxSize / 2));
+                    context.fillRect(offsetX + i * pxSize + pxSize / 4, offsetY + y * pxSize - pxSize / 4, pxSize / 2, pxSize / 2);
                 }
             }
         }
@@ -126,7 +122,7 @@ public class Maze {
         GraphicsContext context = canvas.getGraphicsContext2D();
         canvas.toFront();
         context.setFill(Color.RED);
-        context.fillRect((double)(offsetX + this.vehicle.cell.x * pxSize) + this.vehicle.position.x, (double)(offsetY + this.vehicle.cell.y * pxSize) + this.vehicle.position.y, 2, 2);
+        context.fillRect(offsetX + this.vehicle.cell.x * pxSize + this.vehicle.position.x, offsetY + this.vehicle.cell.y * pxSize + this.vehicle.position.y, 2, 2);
     }
 
     public void visualizeUtils(Canvas canvas, Label front, Label right, Label left, int width, int height) {
@@ -134,13 +130,13 @@ public class Maze {
         int offsetX = width / 2 - this.size / 2 * pxSize;
         int offsetY = height / 2 - this.size / 2 * pxSize;
         GraphicsContext context = canvas.getGraphicsContext2D();
-        context.clearRect(0, 0, (double)width, (double)height);
+        context.clearRect(0, 0, width, height);
         canvas.toFront();
         front.setText(String.format("distance front: %.3f", this.vehicle.distFront));
         right.setText(String.format("distance right: %.3f", this.vehicle.distRight));
         left.setText(String.format("distance left: %.3f", this.vehicle.distLeft));
-        double startX = (double)(offsetX + this.vehicle.cell.x * pxSize) + this.vehicle.position.x;
-        double startY = (double)(offsetY + this.vehicle.cell.y * pxSize) + this.vehicle.position.y;
+        double startX = offsetX + this.vehicle.cell.x * pxSize + this.vehicle.position.x;
+        double startY = offsetY + this.vehicle.cell.y * pxSize + this.vehicle.position.y;
         double endFrontX = startX + this.vehicle.move.x * this.vehicle.distFront;
         double endFrontY = startY - this.vehicle.move.y * this.vehicle.distFront;
         double endLeftX = startX + this.vehicle.leftSen.x * this.vehicle.distLeft;

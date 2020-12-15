@@ -70,7 +70,7 @@ DEFUZZIFY turn
 
 TERM right := 1;
 TERM hard_right := -5;
-TERM very_hard_right:=-12;
+TERM very_hard_right:=-14;
 TERM left:=1;
 TERM hard_left:=5;
 TERM very_hard_left:=20;

@@ -25,9 +25,11 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("sample.fxml"));
         Parent root = (Parent)fxmlLoader.load();
         final Controller controller = (Controller)fxmlLoader.getController();
+
         primaryStage.setTitle("Fuzzy");
         primaryStage.setScene(new Scene(root, (double)this.width, (double)this.height));
         Scene scene = primaryStage.getScene();
+
         Canvas canvas = (Canvas)scene.lookup("#canv");
         final Canvas canvas2 = (Canvas)scene.lookup("#canv2");
         final Canvas canvas3 = (Canvas)scene.lookup("#canv3");
@@ -35,18 +37,22 @@ public class Main extends Application {
         final Label right = (Label)scene.lookup("#right");
         final Label left = (Label)scene.lookup("#left");
         Slider speed = (Slider)scene.lookup("#speed");
+
         GraphicsContext context = canvas.getGraphicsContext2D();
+
         final Maze maze = new Maze(4, this.width, this.height);
-        FIS fis = FIS.load((String)this.getParameters().getRaw().get(0), true);
+        FIS fis = FIS.load(this.getParameters().getRaw().get(0), true);
         final FuzzyRuleSet fuzzyRuleSet = fis.getFuzzyRuleSet();
-        context.clearRect(0.0D, 0.0D, (double)this.width, (double)this.height);
+        //fuzzyRuleSet.chart();
+        context.clearRect(0, 0, this.width, this.height);
         maze.visualizeGrid(context, 720, 720);
+
         (new AnimationTimer() {
             public void handle(long currentNanoTime) {
                 maze.visualizeVehicle(canvas2, 720, 720);
                 maze.visualizeUtils(canvas3, front, right, left, 720, 720);
 
-                for(int i = 0; (double)i < controller.speed; ++i) {
+                for(int i = 0; (double)i < controller.speed; i++) {
                     maze.simulate(fuzzyRuleSet);
                 }
 
